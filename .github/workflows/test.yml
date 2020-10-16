@@ -1,0 +1,40 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite,json,redis
+          coverage: none
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-suggest
+      - name: Copy ENV Configuration for CI
+        run: php -r "file_exists('.env') || copy('.env.ci', '.env');"
+      - name: Create DB and schemas
+        run: |
+            mkdir -p database
+            touch database/database.sqlite
+            php artisan migrate
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit
