@@ -18,12 +18,29 @@ class UserValidator extends LaravelValidator
 {
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
+            'nickname' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
+            'phone' => 'required|unique:users|string',
+            'email' => 'required|email|unique:users|max:100',
+            'gender' => 'integer|between:1,3',
+            'avatar' => 'string',
+            'status' => 'integer|between:0,1',
+            'introduction' => 'string',
+            'role_ids' => 'array',
         ],
         ValidatorInterface::RULE_UPDATE => [
+            'id' => 'required',
+            'name' => 'required|string|max:100',
+            'phone' => 'required|string',
             'password' => 'required|min:8',
+            'nickname' => 'required|string|max:100',
+            'email' => 'required|string|max:100',
+            'gender' => 'integer|between:1,3',
+            'avatar' => 'string',
+            'status' => 'integer|between:0,1',
+            'introduction' => 'string',
+            'role_ids' => 'array',
         ],
     ];
 }

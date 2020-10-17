@@ -9,10 +9,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PermissionResource;
+use App\Repositories\Validators\PermissionValidator;
 use App\Services\PermissionService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 /**
  * Class PermissionController
@@ -29,15 +31,22 @@ class PermissionController extends Controller
     private $userService;
 
     /**
+     * @var PermissionValidator
+     */
+    private $permissionValidator;
+
+    /**
      * PermissionController constructor.
      *
      * @param PermissionService $permissionService
      * @param UserService $userService
+     * @param PermissionValidator $permissionValidator
      */
-    public function __construct(PermissionService $permissionService,UserService $userService)
+    public function __construct(PermissionService $permissionService,UserService $userService,PermissionValidator $permissionValidator)
     {
         $this->permissionService = $permissionService;
         $this->userService = $userService;
+        $this->permissionValidator = $permissionValidator;
         $this->middleware('refreshToken:api', ['except' => []]);
     }
 
@@ -138,11 +147,11 @@ class PermissionController extends Controller
 
     /**
      * @author: chunpat@163.com
-     * Date: 2020/10/15
+     * Date: 2020/10/17
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
      *
      * @api               {post} permissionMenu 添加权限
      * @apiName           post_permissionMenu
@@ -169,14 +178,9 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validateData($request);
-
-        $permission = DB::transaction(function () use ($request) {
-            $permissionResource = $this->permissionService->handleCreate($request);
-            return $this->permissionService->updatePaths($permissionResource->id);
-        });
-
-        return $this->response->created(new PermissionResource($permission));
+        $this->permissionValidator->with( $request->all() )->passesOrFail(ValidatorInterface::RULE_CREATE);
+        $permissionResource = $this->permissionService->handleCreate($request);
+        return $this->response->created(new PermissionResource($permissionResource));
     }
 
     /**
@@ -185,7 +189,6 @@ class PermissionController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
-     * @throws \Illuminate\Validation\ValidationException
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      *
      * @api               {put} permissionMenu 编辑权限
@@ -213,36 +216,8 @@ class PermissionController extends Controller
      */
     public function update(Request $request)
     {
-        $this->validateData($request);
-
+        $this->permissionValidator->with( $request->all() )->passesOrFail(ValidatorInterface::RULE_CREATE);
         $permission = $this->permissionService->handleUpdate($request);
         return $this->response->success(new PermissionResource($permission));
-    }
-
-    /**
-     * @author: chunpat@163.com
-     * Date: 2020/10/15
-     *
-     * @param $request
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    protected function validateData($request){
-        $this->validate($request, [
-            'id' => 'required|integer',
-            'name' => 'required|string|max:30',
-            'title' => 'required|string|max:30',
-            'type' => 'required|string|max:10',
-            'icon' => 'required|string|max:30',
-            'path' => 'required|string|max:100',
-            'component' => 'required|string|max:30',
-            'is_redirect' => 'integer|between:0,1',
-            'is_affix' => 'integer|between:0,1',
-            'is_always_show' => 'integer|between:0,1',
-            'is_hidden' => 'integer|between:0,1',
-            'is_no_cache' => 'integer|between:0,1',
-            'parent_id' => 'integer',
-            'sort' => 'integer',
-        ]);
     }
 }

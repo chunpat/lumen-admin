@@ -27,7 +27,7 @@ class Role extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'name', 'en',
+        'name', 'en', 'remark','sort','status'
     ];
 
     /**
@@ -45,6 +45,15 @@ class Role extends BaseModel
      */
     public function permissions(){
         return $this->belongsToMany('App\Repositories\Models\Permission','App\Repositories\Models\RolePermission','role_id','permission_id');
+    }
+
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rolePermissions(){
+        return $this->hasMany('App\Repositories\Models\RolePermission','role_id','id');
     }
 }
 

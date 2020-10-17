@@ -15,9 +15,17 @@ use App\Repositories\Criteria\PermissionCriteria;
 use App\Repositories\Eloquent\PermissionRepositoryEloquent;
 use App\Repositories\Presenters\PermissionPresenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * Class PermissionService
+ * @package App\Services
+ */
 class PermissionService
 {
+    /**
+     * @var PermissionRepositoryEloquent
+     */
     private $repository;
 
     /**
@@ -30,6 +38,15 @@ class PermissionService
         $this->repository = $repository;
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
     public function handleList(Request $request)
     {
         $this->repository->pushCriteria(new PermissionCriteria($request));
@@ -66,6 +83,14 @@ class PermissionService
         return $treePermissions;
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     *
+     * @param array $roleIds
+     *
+     * @return array
+     */
     public function getPermissionIdsByRoleIds(array $roleIds)
     {
         $permissions = $this->repository->getPermissionIdsByRoleIds($roleIds);
@@ -104,6 +129,14 @@ class PermissionService
         }
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     *
+     * @param $id
+     *
+     * @return mixed
+     */
     public function handleProfile($id)
     {
         $this->repository->setPresenter(PermissionPresenter::class);
@@ -117,13 +150,25 @@ class PermissionService
      * @param Request $request
      *
      * @return mixed
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function handleCreate(Request $request)
     {
-        return $this->repository->create($request->all());
+        $permission = DB::transaction(function () use ($request) {
+            $permissionResource = $this->repository->create($request->all());
+            return $this->updatePaths($permissionResource->id);
+        });
+        return $permission;
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     *
+     * @param int $id
+     *
+     * @return mixed
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
     public function updatePaths(int $id)
     {
         $permission = $this->repository->getParents($id);
@@ -138,6 +183,13 @@ class PermissionService
         return $this->repository->update($attributes,$id);
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     *
+     * @param       $permission
+     * @param array $pathIdArray
+     */
     protected static function getPathIds($permission,array &$pathIdArray = []){
         if($permission->parent){
             $pathIdArray[] = $permission->parent->id;

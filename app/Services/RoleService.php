@@ -17,6 +17,7 @@ use App\Repositories\Eloquent\RolePermissionRepositoryEloquent;
 use App\Repositories\Eloquent\RoleRepositoryEloquent;
 use App\Repositories\Presenters\RolePresenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class RoleService
@@ -28,7 +29,6 @@ class RoleService
      * @var RoleRepository|RoleRepositoryEloquent
      */
     private $repository;
-
 
     /**
      * @var RolePermissionRepositoryEloquent
@@ -59,20 +59,7 @@ class RoleService
     public function handleList(Request $request)
     {
         $this->repository->pushCriteria(new RoleCriteria($request));
-//        $this->repository->setPresenter(RolePresenter::class);
-        $data = $this->repository->searchRoleByPage()->toArray();
-
-        foreach ($data['data'] as &$role){
-            $menuIds = [];
-            foreach ($role['permissions'] as $permission){
-                $menuIds[] = $permission['id'];
-            }
-            $role['menu_ids'] = array_unique($menuIds);
-            unset( $role['permissions']);
-            unset( $role['deleted_at']);
-
-        }
-        return $data;
+        return $this->repository->searchRoleByPage();
     }
 
     /**
@@ -86,7 +73,6 @@ class RoleService
     public function handleProfile($id)
     {
         $this->repository->setPresenter(RolePresenter::class);
-
         return $this->repository->searchRoleBy($id);
     }
 
@@ -101,7 +87,22 @@ class RoleService
      */
     public function handleRegistration(Request $request)
     {
-        return $this->repository->create($request->all());
+        return DB::transaction(function()use($request){
+            $role = $this->repository->create($request->all());
+            $menuIds = $request->get('menu_ids');
+            $insertData = [];
+            foreach ($menuIds as $menuId){
+                $insertData[] = [
+                    'permission_id'=>$menuId,
+                    'role_id'=>$role->id
+                ];
+            }
+            //insert new data
+            if($insertData) {
+                $this->rolePermissionRepository->createAll($insertData);
+            }
+            return $role;
+        });
     }
 
     /**
@@ -110,10 +111,34 @@ class RoleService
      * @param Request $request
      *
      * @return mixed
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function handleUpdate(Request $request)
     {
-        return $this->repository->update($request->all(),$request->get('id'));
+        return DB::transaction(function()use($request){
+            $role = $this->repository->searchRoleBy($request->get('id'));
+            $oldPermissionIds = [];
+
+            foreach ($role->rolePermissions as $rolePermission){
+                $oldPermissionIds[] = $rolePermission->id;
+            }
+
+            $newPermissionIds = $request->get('menu_ids');
+            $keepPermissionIds = array_intersect($oldPermissionIds,$newPermissionIds);
+            $preparePermissionId = array_diff($newPermissionIds,$oldPermissionIds);
+            //delete
+            $this->rolePermissionRepository->batchDeleteNotInIds($keepPermissionIds,$role->id);
+            $insertData = [];
+            foreach ($preparePermissionId as $menuId){
+                $insertData[] = [
+                    'permission_id'=>$menuId,
+                    'role_id'=>$role->id
+                ];
+            }
+            //insert new data
+            if($insertData){
+               $this->rolePermissionRepository->createAll($insertData);
+            }
+            return $this->repository->update($request->all(),$request->get('id'));
+        });
     }
 }

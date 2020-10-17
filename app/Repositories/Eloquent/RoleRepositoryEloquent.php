@@ -58,47 +58,11 @@ class RoleRepositoryEloquent extends BaseRepository implements RoleRepository
 
     public function searchRoleByPage()
     {
-        return $this->with('permissions')->paginate(10);
+        return $this->with(['rolePermissions'])->paginate(10);
     }
 
     public function searchRoleBy($id)
     {
-        return $this->find($id);
-    }
-
-    /**
-     * @author: chunpat@163.com
-     * Date: 2020/10/14
-     * @param $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     * @throws \Throwable
-     */
-    public function insertRole($attributes)
-    {
-        $this->model->name = $attributes['name'];
-        $this->model->en = $attributes['en'];
-
-        $this->model->saveOrFail();
-
-        return $this->model;
-    }
-
-    /**
-     * @author: chunpat@163.com
-     * Date: 2020/10/14
-     * @param $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function updateRole($attributes)
-    {
-        $id = $attributes['id'];
-        unset($attributes['id']);
-        $this->model = Role::findOrFail($id);
-        $this->model->name = $attributes['name'];
-        $this->model->en = $attributes['en'];
-        $this->model->save();
-        return $this->model;
+        return $this->with('rolePermissions')->find($id);
     }
 }

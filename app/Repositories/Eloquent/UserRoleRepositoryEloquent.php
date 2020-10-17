@@ -11,21 +11,23 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Contracts\Repositories\RoleRepository;
-use App\Repositories\Models\Role;
-use App\Repositories\Models\RolePermission;
+use App\Contracts\Repositories\UserRepository;
+use App\Repositories\Models\User;
+use App\Repositories\Models\UserRole;
+use App\Repositories\Validators\UserValidator;
 use Illuminate\Support\Facades\Hash;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class RoleRepositoryEloquent.
+ * Class UserRepositoryEloquent.
  */
-class RolePermissionRepositoryEloquent extends BaseRepository implements RoleRepository
+class UserRoleRepositoryEloquent extends BaseRepository
 {
+    /**
+     * @var array
+     */
     protected $fieldSearchable = [
-        'role_id' => 'like',
-        'permission_id' => 'like', // Default Condition "="
     ];
 
     /**
@@ -35,7 +37,7 @@ class RolePermissionRepositoryEloquent extends BaseRepository implements RoleRep
      */
     public function model()
     {
-        return RolePermission::class;
+        return UserRole::class;
     }
 
     /**
@@ -45,21 +47,29 @@ class RolePermissionRepositoryEloquent extends BaseRepository implements RoleRep
      */
     public function validator()
     {
+        return UserValidator::class;
     }
 
     /**
      * Boot up the repository, pushing criteria.
      *
      * @throws \Prettus\Repository\Exceptions\RepositoryException
-*/
+     */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
-    public function batchDeleteNotInIds(array $permissionIds,int $roleId)
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/17
+     * @param array $roleIds
+     * @param int   $userId
+     *
+     * @return mixed
+     */
+    public function batchDeleteNotInIds(array $roleIds,int $userId)
     {
-        return $this->model->where('role_id',$roleId)->whereNotIn('permission_id',$permissionIds)->delete();
+        return $this->model->where('user_id',$userId)->whereNotIn('role_id',$roleIds)->delete();
     }
-
 }

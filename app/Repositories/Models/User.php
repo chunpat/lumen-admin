@@ -65,8 +65,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
      * Date: 2020/10/16
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function userRole(){
-        return $this->hasMany('UserRole','user_id','id');
+    public function userRoles(){
+        return $this->hasMany('App\Repositories\Models\UserRole','user_id','id');
     }
 
     /**

@@ -16,7 +16,7 @@ class Role extends Migration
         Schema::create('role', function (Blueprint $table) {
             $table->id();
             $table->string('name',20);
-            $table->string('en',20)->unique();
+            $table->string('en',20);
             $table->string('remark');
             $table->tinyInteger('sort');
             $table->boolean('status')->default(false);

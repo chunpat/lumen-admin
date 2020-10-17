@@ -55,7 +55,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     Route::post('upload', 'UploadController@upload');
 
     Route::post('role', 'RoleController@store');
-    Route::get('role', 'RoleController@index');
+    Route::get('roles', 'RoleController@index');
     Route::put('role', 'RoleController@update');
 
     Route::get('permissionMenus', 'PermissionController@permissionMenus');

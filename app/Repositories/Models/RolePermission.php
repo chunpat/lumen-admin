@@ -29,5 +29,9 @@ class RolePermission extends BaseModel
      * @var array
      */
     protected $hidden = [
+        'role_id',
+        'created_at',
+        'updated_at'
     ];
+
 }

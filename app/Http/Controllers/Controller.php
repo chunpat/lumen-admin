@@ -77,6 +77,10 @@ class Controller extends BaseController
      */
 
     /**
+     * @apiDefine Permission 权限
+     */
+
+    /**
      * @apiDefine Authorization 授权
      */
 }

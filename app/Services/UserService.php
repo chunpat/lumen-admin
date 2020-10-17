@@ -14,8 +14,11 @@ namespace App\Services;
 use App\Contracts\Repositories\UserRepository;
 use App\Repositories\Criteria\UserCriteria;
 use App\Repositories\Eloquent\UserRepositoryEloquent;
+use App\Repositories\Eloquent\UserRoleRepositoryEloquent;
+use App\Repositories\Models\UserRole;
 use App\Repositories\Presenters\UserPresenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class UserService
@@ -29,13 +32,20 @@ class UserService
     private $repository;
 
     /**
+     * @var UserRepository|UserRepositoryEloquent
+     */
+    private $userRoleRepository;
+
+    /**
      * UserService constructor.
      *
-     * @param UserRepositoryEloquent $repository
+     * @param UserRepository $repository
+     * @param UserRoleRepositoryEloquent $userRoleRepository
      */
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $repository,UserRoleRepositoryEloquent $userRoleRepository)
     {
         $this->repository = $repository;
+        $this->userRoleRepository = $userRoleRepository;
     }
 
     /**
@@ -66,7 +76,6 @@ class UserService
     public function handleProfile($id)
     {
         $this->repository->setPresenter(UserPresenter::class);
-
         return $this->repository->searchUserBy($id);
     }
 
@@ -81,7 +90,22 @@ class UserService
      */
     public function handleRegistration(Request $request)
     {
-        return $this->repository->insertUser($request->all());
+        $user = DB::transaction(function () use($request){
+            $user = $this->repository->insertUser($request->all());
+            $roleIds = $request->get('role_ids');
+            $insertData = [];
+            foreach ($roleIds as $roleId){
+                $insertData[] = [
+                    'role_id'=>$roleId,
+                    'user_id'=>$user->id,
+                ];
+            }
+            //userRole insert
+            if($insertData) $this->userRoleRepository->createAll($insertData);
+            return $user;
+        });
+
+        return $user;
     }
 
     /**
@@ -93,7 +117,34 @@ class UserService
      */
     public function handleUpdate(Request $request)
     {
-        return $this->repository->updateUser($request->all());
+        $user = DB::transaction(function () use($request){
+            $user = $this->repository->searchUserBy($request->get('id'));
+            $oldRoleIds = [];
+            foreach ($user->userRoles as $userRole){
+                $oldRoleIds[] = $userRole->role_id;
+            }
+
+            $newRoleIds = $request->get('role_ids');
+            $keepRoleIds = array_intersect($oldRoleIds,$newRoleIds);
+            $prepRoleIds = array_diff($newRoleIds,$oldRoleIds);
+
+            //delete
+            $this->userRoleRepository->batchDeleteNotInIds($keepRoleIds,$user->id);
+            $insertData = [];
+            foreach ($prepRoleIds as $roleId){
+                $insertData[] = [
+                    'user_id'=>$user->id,
+                    'role_id'=>$roleId
+                ];
+            }
+
+            //insert new data
+            if($insertData){
+                $this->userRoleRepository->createAll($insertData);
+            }
+            return $this->repository->updateUser($request->all());
+        });
+        return $user;
     }
 
     /**

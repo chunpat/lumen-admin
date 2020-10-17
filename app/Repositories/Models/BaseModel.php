@@ -10,11 +10,21 @@ namespace App\Repositories\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class BaseModel extends Model
 {
-    protected function serializeDate(\DateTimeInterface $date)
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/10/16
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function createAll(Array $data)
     {
-        return $date->format('Y-m-d H:i:s');
+        $rs = DB::table($this->getTable())->insert($data);
+        return $rs;
     }
+
 }

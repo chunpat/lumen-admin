@@ -68,7 +68,9 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     public function searchUsersByPage()
     {
-        return $this->paginate(10);
+        return $this->model->with(['userRoles'=>function($q){
+            $q->select(['id','role_id','user_id']);
+        }])->paginate(10);
     }
 
     /**
@@ -81,7 +83,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     public function searchUserBy($id)
     {
-        return $this->find($id);
+        return $this->model->with('userRoles')->find($id);
     }
 
     /**
