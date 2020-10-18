@@ -63,13 +63,14 @@ class UserRoleRepositoryEloquent extends BaseRepository
     /**
      * @author: chunpat@163.com
      * Date: 2020/10/17
+     *
      * @param array $roleIds
      * @param int   $userId
      *
      * @return mixed
      */
-    public function batchDeleteNotInIds(array $roleIds,int $userId)
+    public function batchDeleteNotInIds(array $roleIds, int $userId)
     {
-        return $this->model->where('user_id',$userId)->whereNotIn('role_id',$roleIds)->delete();
+        return $this->model->where('user_id', $userId)->whereNotIn('role_id', $roleIds)->delete();
     }
 }

@@ -62,4 +62,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     Route::get('menus', 'PermissionController@menus');
     Route::post('permissionMenu', 'PermissionController@store');
     Route::put('permissionMenu', 'PermissionController@update');
+
+    Route::get('resource/images', 'ResourceController@getImages');
+    Route::post('resource/image', 'ResourceController@uploadImage');
+    Route::delete('resource/image', 'ResourceController@deleteImage');
 });

@@ -18,7 +18,6 @@ class PermissionValidator extends LaravelValidator
 {
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'id' => 'required|integer',
             'name' => 'required|string|max:30',
             'title' => 'required|string|max:30',
             'type' => 'required|string|max:10',
@@ -34,6 +33,7 @@ class PermissionValidator extends LaravelValidator
             'sort' => 'integer',
         ],
         ValidatorInterface::RULE_UPDATE => [
+            'id' => 'required|integer',
             'name' => 'required|string|max:30',
             'title' => 'required|string|max:30',
             'type' => 'required|string|max:10',

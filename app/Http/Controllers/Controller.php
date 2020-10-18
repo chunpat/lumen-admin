@@ -81,6 +81,10 @@ class Controller extends BaseController
      */
 
     /**
+     * @apiDefine Resource 资源
+     */
+
+    /**
      * @apiDefine Authorization 授权
      */
 }
