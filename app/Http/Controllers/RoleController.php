@@ -29,7 +29,14 @@ class RoleController extends Controller
      */
     private $roleValidator;
 
-    public function __construct(RoleService $roleService,RoleValidator $roleValidator)
+
+    /**
+     * RoleController constructor.
+     *
+     * @param RoleService   $roleService
+     * @param RoleValidator $roleValidator
+     */
+    public function __construct(RoleService $roleService, RoleValidator $roleValidator)
     {
         $this->roleService = $roleService;
         $this->roleValidator = $roleValidator;

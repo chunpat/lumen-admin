@@ -12,9 +12,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\RoleRepository;
-use App\Repositories\Models\Role;
 use App\Repositories\Models\RolePermission;
-use Illuminate\Support\Facades\Hash;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
