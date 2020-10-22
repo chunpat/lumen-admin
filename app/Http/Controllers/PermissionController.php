@@ -27,7 +27,9 @@ class PermissionController extends Controller
      */
     private $permissionService;
 
-
+    /**
+     * @var UserService
+     */
     private $userService;
 
     /**
@@ -105,8 +107,8 @@ class PermissionController extends Controller
      * @author            : chunpat@163.com
      * Date: 2020/10/15
      *
-     *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      *
      * @api               {get} permissionMenus 当前用户权限列表
      * @apiName           get_permissionMenus

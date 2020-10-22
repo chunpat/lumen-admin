@@ -52,7 +52,7 @@ class PermissionService
         $this->repository->pushCriteria(new PermissionCriteria($request));
         $this->repository->setPresenter(PermissionPresenter::class);
 
-        return $this->repository->searchByPage(10);
+        return $this->repository->searchByPage(20);
     }
 
     /**

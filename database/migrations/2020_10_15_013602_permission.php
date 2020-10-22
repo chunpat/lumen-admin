@@ -17,7 +17,7 @@ class Permission extends Migration
             $table->id();
             $table->string('name',30);
             $table->string('title',30);
-            $table->string('type',10)->default('view')->comment('view:界面；api:接口');
+            $table->string('type',10)->comment('view:界面；api:接口');
             $table->string('icon',30)->nullable()->default(null);
             $table->string('path',100)->nullable()->default(null);
             $table->string('paths',30)->nullable()->default(null);

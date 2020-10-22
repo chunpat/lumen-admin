@@ -76,4 +76,14 @@ return [
     'timezone' => ':attribute 必须是一个合法的时区值。',
     'unique' => ':attribute 已经存在。',
     'url' => ':attribute 格式不正确。',
+
+    //自定义中文错误
+    'custom' => [
+        'menu_ids' => [
+            'required' => '需要选择菜单权限',
+        ],
+        'remark' => [
+            'required' => '备注需要填写',
+        ],
+    ],
 ];
