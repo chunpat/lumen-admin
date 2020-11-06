@@ -77,4 +77,13 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public function roles(){
         return $this->belongsToMany('App\Repositories\Models\Role','App\Repositories\Models\UserRole','user_id','role_id');
     }
+
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/11/6
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function userSetting(){
+        return $this->belongsTo('App\Repositories\Models\UserSetting','id','user_id');
+    }
 }

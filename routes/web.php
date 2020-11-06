@@ -45,6 +45,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     Route::get('users', 'UsersController@index');
     Route::put('users', 'UsersController@update');
     Route::put('usersPassword', 'UsersController@updatePassword');
+    Route::put('userSetting', 'UserSettingController@update');
 
     Route::post('authorization', 'AuthorizationController@store');
     Route::delete('authorization', 'AuthorizationController@destroy');
