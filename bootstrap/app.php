@@ -148,6 +148,8 @@ $app->register(QueryLoggerServiceProvider::class);
 $app->register(RedisServiceProvider::class);
 $app->register(EnumServiceProvider::class);
 
+$app->register(Chunpat\LumenApiStarterGenerator\LumenGeneratorServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

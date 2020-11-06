@@ -124,7 +124,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         $id = $attributes['id'];
         unset($attributes['id']);
         $this->model = User::findOrFail($id);
-        $this->model->password = Hash::make($attributes['password']);
+//        $this->model->password = Hash::make($attributes['password']);
         $this->model->nickname = $attributes['nickname'];
         $this->model->avatar = $attributes['avatar'] ?? '';
         $this->model->introduction = $attributes['introduction'] ?? '';
@@ -134,6 +134,22 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $this->model;
     }
 
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/11/5
+     * @param $attributes
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function updateUserPassword($attributes)
+    {
+        $id = $attributes['id'];
+        unset($attributes['id']);
+        $this->model = User::findOrFail($id);
+        $this->model->password = Hash::make($attributes['password']);
+        $this->model->save();
+        return $this->model;
+    }
     /**
      * @author: chunpat@163.com
      * Date: 2020/10/16

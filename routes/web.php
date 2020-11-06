@@ -44,6 +44,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     Route::get('users/{id}', 'UsersController@show');
     Route::get('users', 'UsersController@index');
     Route::put('users', 'UsersController@update');
+    Route::put('usersPassword', 'UsersController@updatePassword');
 
     Route::post('authorization', 'AuthorizationController@store');
     Route::delete('authorization', 'AuthorizationController@destroy');
@@ -66,4 +67,11 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     Route::get('resource/images', 'ResourceController@getImages');
     Route::post('resource/image', 'ResourceController@uploadImage');
     Route::delete('resource/image', 'ResourceController@deleteImage');
+
+    Route::get('loginLogs', 'LoginLogController@index');
+
+    Route::get('settings', 'SettingController@index');
+    Route::post('setting', 'SettingController@store');
+    Route::put('settingAll', 'SettingController@updateAll');
+    Route::put('setting', 'SettingController@update');
 });

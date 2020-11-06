@@ -157,7 +157,6 @@ class UsersController extends Controller
      *
      * @apiParam {String} id 用户id 必填
      * @apiParam {String} nickname 昵称 必填
-     * @apiParam {String} password 密码 必填
      * @apiParam {String} gender 性别 1：男；2：女；3：未知
      * @apiParam {String} status 状态 0：禁用；1：启用；
      * @apiParam {String} avatar 头像
@@ -177,5 +176,33 @@ class UsersController extends Controller
         $this->userValidator->with( $request->all() )->passesOrFail(ValidatorInterface::RULE_UPDATE);
         $user = $this->userService->handleUpdate($request);
         return $this->response->success(new UserResource($user));
+    }
+
+    /**
+     * @author: chunpat@163.com
+     * Date: 2020/11/5
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     * @throws \Illuminate\Validation\ValidationException
+     *
+     * @api               {put} usersPassword 更新用户密码
+     * @apiName           put_usersPassword
+     * @apiGroup          Users
+     *
+     * @apiParam {String} id 用户id 必填
+     * @apiParam {String} password 密码 必填
+     *
+     * @apiUse            FailResponse
+     */
+    public function updatePassword(Request $request)
+    {
+        $this->validate($request, [
+            'password' => 'required|min:8',
+        ]);
+        if(!$this->userService->handleUpdatePassword($request)){
+            $this->response->fail();
+        };
+        return $this->response->success();
     }
 }

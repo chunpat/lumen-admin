@@ -66,8 +66,8 @@ class PermissionService
     {
         $this->repository->setPresenter(PermissionPresenter::class);
         $permissions = $this->repository->getByPermissionIds($permissionIds);
-        $newPermissions = [];
 
+        $newPermissions = [];
         //数据处理
         foreach ($permissions as $permission){
             if(isset($newPermissions[$permission->parent_id])){

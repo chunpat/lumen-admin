@@ -32,6 +32,7 @@ return [
         ResponseCodeEnum::CLIENT_PARAMETER_ERROR => '参数错误',
         ResponseCodeEnum::CLIENT_CREATED_ERROR => '数据已存在',
         ResponseCodeEnum::CLIENT_DELETED_ERROR => '数据不存在',
+        ResponseCodeEnum::CLIENT_PARAMETER_AUTH_ERROR => '该数据不属于你的',
 
         // 服务端错误
         ResponseCodeEnum::SYSTEM_ERROR => '服务器错误',

@@ -33,7 +33,7 @@ class UserValidator extends LaravelValidator
             'id' => 'required',
             'name' => 'required|string|max:100',
             'phone' => 'required|string',
-            'password' => 'required|min:8',
+//            'password' => 'required|min:8',
             'nickname' => 'required|string|max:100',
             'email' => 'required|string|max:100',
             'gender' => 'integer|between:1,3',

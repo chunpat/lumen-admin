@@ -33,7 +33,7 @@ class PermissionResource extends JsonResource
             'is_no_cache' => $this->is_no_cache,
             'parent_id' => $this->parent_id,
             'sort' => $this->sort,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s'):'-',
         ];
     }
 }

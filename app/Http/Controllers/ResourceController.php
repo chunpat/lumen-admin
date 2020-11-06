@@ -17,7 +17,7 @@ class ResourceController extends Controller
 {
     const LOCAL_IMAGE_PATH = 'storage/uploads/images/';
 
-    const ALLOW_FILE_TYPES = array('gif', 'jpeg', 'png', 'bmp');
+    const ALLOW_FILE_TYPES = array('gif', 'jpg', 'jpeg', 'png', 'bmp');
 
     /**
      * @author            : chunpat@163.com
@@ -30,7 +30,7 @@ class ResourceController extends Controller
      * @throws ApiHttpException
      * @throws \Illuminate\Contracts\Filesystem\FileExistsException
      *
-     * @api               {post} uploadImage 上传图片
+     * @api               {post} resource/image 上传图片
      * @apiName           post_uploadImage
      * @apiGroup          Resource
      *
@@ -47,6 +47,9 @@ class ResourceController extends Controller
     {
         $file = $request->file('image');
         $directory = $request->get('directory');
+        $this->validate($request, [
+            'image' => 'required|file',
+        ]);
         //获取文件类型后缀
         $extension = $file->getClientOriginalExtension();
         //是否是要求的文件

@@ -13,16 +13,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Repositories\Enums\ResponseCodeEnum;
+use App\Services\LoginLogService;
 use Illuminate\Http\Request;
 
 class AuthorizationController extends Controller
 {
     /**
-     * Create a new AuthController instance.
+     * @var LoginLogService
      */
-    public function __construct()
+    private $loginLogService;
+
+    /**
+     * Create a new AuthController instance.
+     * @param LoginLogService   $loginLogService
+     */
+    public function __construct(LoginLogService $loginLogService)
     {
         $this->middleware('refreshToken:api', ['except' => ['store']]);
+        $this->loginLogService = $loginLogService;
 //        $this->middleware('auth:api', ['except' => ['store']]);
     }
 
@@ -106,8 +114,12 @@ class AuthorizationController extends Controller
 
         $credentials = request(['name', 'email', 'password']);
         if (! $token = auth()->attempt($credentials)) {
+            //失败记录
+            $this->loginLogService->handleStore($request,false);
             $this->response->errorUnauthorized();
         }
+        //成功记录
+        $this->loginLogService->handleStore($request,true);
 
         return $this->respondWithToken($token);
     }
