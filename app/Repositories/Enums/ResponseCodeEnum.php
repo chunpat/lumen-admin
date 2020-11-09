@@ -33,8 +33,7 @@ class ResponseCodeEnum extends Enum implements LocalizedEnumContract
     const CLIENT_CREATED_ERROR = 400002;
     const CLIENT_DELETED_ERROR = 400003;
     const CLIENT_PARAMETER_AUTH_ERROR = 400004;
-
-
+    const CLIENT_DISABLE_ERROR = 400005;
 
     //使用示范
     const CLIENT_TEST_ERROR = 400009;

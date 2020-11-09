@@ -49,7 +49,7 @@ class LoginLogRepositoryEloquent extends BaseRepository implements LoginLogRepos
      */
     public function searchLoginLogsByPage()
     {
-        return $this->paginate(10);
+        return $this->orderBy('id','desc')->paginate(10);
     }
 
     /**

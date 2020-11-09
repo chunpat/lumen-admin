@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PermissionResource;
+use App\Repositories\Enums\StatusEnum;
 use App\Repositories\Validators\PermissionValidator;
 use App\Services\PermissionService;
 use App\Services\UserService;
@@ -40,11 +41,11 @@ class PermissionController extends Controller
     /**
      * PermissionController constructor.
      *
-     * @param PermissionService $permissionService
-     * @param UserService $userService
+     * @param PermissionService   $permissionService
+     * @param UserService         $userService
      * @param PermissionValidator $permissionValidator
      */
-    public function __construct(PermissionService $permissionService,UserService $userService,PermissionValidator $permissionValidator)
+    public function __construct(PermissionService $permissionService, UserService $userService, PermissionValidator $permissionValidator)
     {
         $this->permissionService = $permissionService;
         $this->userService = $userService;
@@ -92,8 +93,8 @@ class PermissionController extends Controller
     {
         $user = $this->userService->getDetailByAuth();
         $permissionIds = [];
-        foreach ($user->roles as $role){
-            foreach ($role->permissions as $permission){
+        foreach ($user->roles as $role) {
+            foreach ($role->permissions as $permission) {
                 $permissionIds[] = $permission->id;
             }
         }
@@ -148,8 +149,9 @@ class PermissionController extends Controller
     }
 
     /**
-     * @author: chunpat@163.com
+     * @author            : chunpat@163.com
      * Date: 2020/10/17
+     *
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
@@ -180,14 +182,15 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->permissionValidator->with( $request->all() )->passesOrFail(ValidatorInterface::RULE_CREATE);
+        $this->permissionValidator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
         $permissionResource = $this->permissionService->handleCreate($request);
         return $this->response->created(new PermissionResource($permissionResource));
     }
 
     /**
-     * @author: chunpat@163.com
+     * @author            : chunpat@163.com
      * Date: 2020/10/15
+     *
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
@@ -218,7 +221,7 @@ class PermissionController extends Controller
      */
     public function update(Request $request)
     {
-        $this->permissionValidator->with( $request->all() )->passesOrFail(ValidatorInterface::RULE_CREATE);
+        $this->permissionValidator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
         $permission = $this->permissionService->handleUpdate($request);
         return $this->response->success(new PermissionResource($permission));
     }

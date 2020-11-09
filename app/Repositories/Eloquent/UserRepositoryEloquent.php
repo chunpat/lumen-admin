@@ -12,6 +12,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\UserRepository;
+use App\Repositories\Enums\StatusEnum;
 use App\Repositories\Models\User;
 use App\Repositories\Validators\UserValidator;
 use Illuminate\Support\Facades\Hash;
@@ -160,6 +161,9 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     public function getDetail($id)
     {
-        return $this->model->with('roles.permissions')->findOrFail($id);
+        return $this->model->with(['roles'=>function($q){
+            $q->with(['permissions']);
+            $q->where('status',StatusEnum::AVAILABLE);
+        }])->findOrFail($id);
     }
 }

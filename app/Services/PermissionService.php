@@ -11,6 +11,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ParameterException;
 use App\Repositories\Criteria\PermissionCriteria;
 use App\Repositories\Eloquent\PermissionRepositoryEloquent;
 use App\Repositories\Presenters\PermissionPresenter;
@@ -207,6 +208,9 @@ class PermissionService
      */
     public function handleUpdate(Request $request)
     {
+        if($request->get('id') === $request->get('parent_id')){
+            throw new ParameterException(400001);
+        }
         return $this->repository->update($request->all(),$request->get('id'));
     }
 }

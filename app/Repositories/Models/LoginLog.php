@@ -23,6 +23,7 @@ class LoginLog extends Model
         'browser',
         'platform',
         'status',
+        'desc'
     ];
 
     /**

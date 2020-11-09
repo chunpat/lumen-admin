@@ -20,6 +20,7 @@ class CreateLoginLogsTable extends Migration
             $table->string('location',50)->comment('登录地点');
             $table->string('browser',50)->comment('浏览器');
             $table->string('platform',50)->comment('操作系统');
+            $table->string('desc')->comment('描述');
             $table->tinyInteger('status')->comment('登录状态：0失败1成功');
             $table->timestamps();
         });

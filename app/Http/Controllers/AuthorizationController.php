@@ -11,8 +11,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ParameterException;
 use App\Http\Resources\UserResource;
 use App\Repositories\Enums\ResponseCodeEnum;
+use App\Repositories\Enums\StatusEnum;
 use App\Repositories\Models\User;
 use App\Repositories\Models\UserSetting;
 use App\Services\LoginLogService;
@@ -141,11 +143,18 @@ class AuthorizationController extends Controller
         $credentials = request(['name', 'email', 'password']);
         if (! $token = auth()->attempt($credentials)) {
             //失败记录
-            $this->loginLogService->handleStore($request,false);
+            $this->loginLogService->handleStore($request,ResponseCodeEnum::getDescription(ResponseCodeEnum::CLIENT_PARAMETER_ERROR));
             $this->response->errorUnauthorized();
         }
+
+        if(Auth::user()->status !== StatusEnum::AVAILABLE){
+            //失败记录
+            $this->loginLogService->handleStore($request,ResponseCodeEnum::getDescription(ResponseCodeEnum::CLIENT_DISABLE_ERROR));
+            throw new ParameterException(400005);
+        }
+
         //成功记录
-        $this->loginLogService->handleStore($request,true);
+        $this->loginLogService->handleStore($request);
 
         return $this->respondWithToken($token);
     }

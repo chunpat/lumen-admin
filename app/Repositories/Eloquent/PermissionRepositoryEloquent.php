@@ -81,7 +81,7 @@ class PermissionRepositoryEloquent extends BaseRepository implements UserReposit
 
     public function getByPermissionIds(array $permissionIds = [],array $field = ['*'])
     {
-        $permissions = $this->model->whereIn('id',$permissionIds)->select($field)->get();
+        $permissions = $this->model->whereIn('id',$permissionIds)->select($field)->orderBy('sort','desc')->get();
         return $permissions;
     }
 

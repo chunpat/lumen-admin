@@ -23,6 +23,7 @@ class LoginLogTransformer extends TransformerAbstract
             'browser' => $loginLog->browser,
             'platform' => $loginLog->platform,
             'status' => $loginLog->status,
+            'desc' => $loginLog->desc,
             'created_at' => $loginLog->created_at ? $loginLog->created_at->format('Y-m-d H:i:s') : null,
         ];
     }

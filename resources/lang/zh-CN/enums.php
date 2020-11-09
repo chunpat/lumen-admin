@@ -33,6 +33,7 @@ return [
         ResponseCodeEnum::CLIENT_CREATED_ERROR => '数据已存在',
         ResponseCodeEnum::CLIENT_DELETED_ERROR => '数据不存在',
         ResponseCodeEnum::CLIENT_PARAMETER_AUTH_ERROR => '该数据不属于你的',
+        ResponseCodeEnum::CLIENT_DISABLE_ERROR => '该账号已被禁用',
 
         // 服务端错误
         ResponseCodeEnum::SYSTEM_ERROR => '服务器错误',
